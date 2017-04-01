@@ -15,16 +15,21 @@ export class Signup {
   constructor(public router: Router, public http: Http) {
   }
 
-  signup(event, userName, password) {
+  signup(event, username, password) {
     event.preventDefault();
-    let body = JSON.stringify({ userName, password });
+    let body = JSON.stringify({ username, password });
     this.http.post('http://localhost:5946/rest/api/register', body, { headers: contentHeaders })
       .subscribe(
 
       response => {
         console.log(response);
-        localStorage.setItem('id_token', response.json().token);
-        this.router.navigate(['home']);
+		if (response.json().status === true) {
+			localStorage.setItem('id_token', response.json().token);
+			this.router.navigate(['home']);
+		} else {
+			alert('register failed.');
+			console.log(response);
+		}
       },
       error => {
         alert(error.text());
